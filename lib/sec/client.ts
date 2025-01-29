@@ -70,7 +70,7 @@ export class SECClient {
     const formattedStartDate = this.formatDate(startDate);
     const formattedEndDate = endDate ? this.formatDate(endDate) : formattedStartDate;
     
-    const url = `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&type=4&dateb=${formattedEndDate}&datea=${formattedStartDate}&owner=include&count=100`;
+    const url = `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&type=4&company=TESLA&owner=include&count=100`;
 
     try {
       const response = await fetch(url, {
