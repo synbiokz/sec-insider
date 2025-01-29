@@ -11,6 +11,7 @@ interface RawFiling {
   primaryDocument: string;
   primaryDocDescription: string;
   filingHref: string;
+  issuerName: string;  // Added this field
   documentFormatFiles: Array<{
     documentUrl: string;
     type: string;
@@ -69,7 +70,7 @@ export class SECClient {
     const formattedStartDate = this.formatDate(startDate);
     const formattedEndDate = endDate ? this.formatDate(endDate) : formattedStartDate;
     
-    const url = `https://www.sec.gov/cgi-bin/browse-edgar?action=getcomplete&type=4&dateb=${formattedEndDate}&datea=${formattedStartDate}&owner=include&count=100`;
+    const url = `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&type=4&dateb=${formattedEndDate}&datea=${formattedStartDate}&owner=include&count=100`;
 
     try {
       const response = await fetch(url, {
@@ -122,19 +123,19 @@ export class SECClient {
     const filings: RawFiling[] = [];
     
     // Find all rows in the search results table
-    $('.table-bordered tr').each((i, row) => {
+    $('table.tableFile2 tr').each((i, row) => {
       if (i === 0) return; // Skip header row
       
-      const $row = $(row);
-      const $cells = $row.find('td');
+      const $cols = $(row).find('td');
       
-      if ($cells.length >= 4) {
+      if ($cols.length >= 4) {
         const filing: RawFiling = {
-          filingDate: $cells.eq(3).text().trim(),
-          accessionNumber: $cells.eq(4).find('a').attr('href')?.split('/').pop()?.replace('.txt', '') || '',
-          primaryDocument: $cells.eq(1).text().trim(),
-          primaryDocDescription: $cells.eq(2).text().trim(),
-          filingHref: 'https://www.sec.gov' + $cells.eq(1).find('a').attr('href'),
+          accessionNumber: $cols.eq(1).find('a').attr('href')?.split('/')[4] || '',
+          filingDate: $cols.eq(3).text().trim(),
+          issuerName: $('span.companyName').first().text().split('CIK')[0].trim(),
+          primaryDocument: $cols.eq(2).text().trim(),
+          primaryDocDescription: 'Form 4',
+          filingHref: 'https://www.sec.gov' + $cols.eq(1).find('a').attr('href'),
           documentFormatFiles: []
         };
         
