@@ -12,6 +12,7 @@
   "dependencies": {
     "@heroicons/react": "^2.0.18",
     "@prisma/client": "^6.2.1",
+    "cheerio": "^1.0.0",
     "mongodb": "^6.12.0",
     "next": "14.0.4",
     "prisma": "^6.2.1",
