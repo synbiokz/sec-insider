@@ -1,5 +1,3 @@
-// lib/sec/client.ts
-
 /**
  * Client for interacting with SEC EDGAR API
  * Handles fetching Form 4 filings and related data
@@ -27,7 +25,7 @@ interface FilingsList {
 
 export class SECClient {
   private baseUrl = 'https://www.sec.gov/Archives/edgar/data';
-  private userAgent = 'SECInsider/1.0.0';
+  private userAgent = 'SEC Insider Project (secinsider.vercel.app) - Contact: secinsiderck@gmail.com';
   
   constructor() {
     if (!process.env.SEC_API_KEY) {
