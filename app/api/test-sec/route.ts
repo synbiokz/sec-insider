@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import SECClient from '@/lib/sec/client'
+import SECClient from '../../../lib/sec/client'
 
 export async function GET() {
   try {
