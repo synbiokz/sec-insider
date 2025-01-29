@@ -1,3 +1,5 @@
+import * as cheerio from 'cheerio';
+
 /**
  * Client for interacting with SEC EDGAR API
  * Handles fetching Form 4 filings and related data
@@ -116,9 +118,34 @@ export class SECClient {
    * Parses the filings list HTML response into structured data
    */
   private parseFilingsList(html: string): FilingsList {
-    // TODO: Implement HTML parsing logic
-    // Will use a proper HTML parser library
-    throw new Error('HTML parsing not yet implemented');
+    const $ = cheerio.load(html);
+    const filings: RawFiling[] = [];
+    
+    // Find all rows in the search results table
+    $('.table-bordered tr').each((i, row) => {
+      if (i === 0) return; // Skip header row
+      
+      const $row = $(row);
+      const $cells = $row.find('td');
+      
+      if ($cells.length >= 4) {
+        const filing: RawFiling = {
+          filingDate: $cells.eq(3).text().trim(),
+          accessionNumber: $cells.eq(4).find('a').attr('href')?.split('/').pop()?.replace('.txt', '') || '',
+          primaryDocument: $cells.eq(1).text().trim(),
+          primaryDocDescription: $cells.eq(2).text().trim(),
+          filingHref: 'https://www.sec.gov' + $cells.eq(1).find('a').attr('href'),
+          documentFormatFiles: []
+        };
+        
+        filings.push(filing);
+      }
+    });
+
+    return {
+      filings,
+      hasMore: $('.pagination').length > 0
+    };
   }
 }
 
