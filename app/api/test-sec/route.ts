@@ -5,15 +5,18 @@ export async function GET() {
   try {
     const client = new SECClient()
     
-    // Get filings from the last 7 days
+    // Test with a shorter date range
+    const endDate = new Date()
     const startDate = new Date()
-    startDate.setDate(startDate.getDate() - 7)
+    startDate.setDate(startDate.getDate() - 1) // Just last 24 hours
     
+    console.log('Fetching filings from:', startDate, 'to:', endDate)
     const filingsList = await client.getFilingsList(startDate)
     
     return NextResponse.json({ 
       success: true, 
       message: 'SEC API test',
+      url: client['url'], // Log the URL we're hitting
       filingsList 
     })
   } catch (error) {
@@ -22,7 +25,7 @@ export async function GET() {
       { 
         success: false, 
         message: 'SEC API test failed', 
-        error: error.message 
+        error: error.message || String(error)
       },
       { status: 500 }
     )
